@@ -3,6 +3,8 @@ import {
   createPost,
   deletePost,
   getPost,
+  likeDislikePost,
+  replyPost,
 } from "../controllers/postController.js";
 import { protectedRoute } from "../middlewares/protectedRoute.js";
 
@@ -10,6 +12,8 @@ const router = express.Router();
 
 router.get("/:id", getPost);
 router.post("/", protectedRoute, createPost);
+router.post("/like/:id", protectedRoute, likeDislikePost);
+router.post("/reply/:id", protectedRoute, replyPost);
 router.delete("/:id", protectedRoute, deletePost);
 
 export default router;
