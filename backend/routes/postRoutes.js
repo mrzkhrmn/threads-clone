@@ -2,6 +2,7 @@ import express from "express";
 import {
   createPost,
   deletePost,
+  getFeedPosts,
   getPost,
   likeDislikePost,
   replyPost,
@@ -10,6 +11,7 @@ import { protectedRoute } from "../middlewares/protectedRoute.js";
 
 const router = express.Router();
 
+router.get("/feed", protectedRoute, getFeedPosts);
 router.get("/:id", getPost);
 router.post("/", protectedRoute, createPost);
 router.post("/like/:id", protectedRoute, likeDislikePost);
