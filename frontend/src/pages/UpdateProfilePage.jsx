@@ -25,6 +25,7 @@ export const UpdateProfilePage = () => {
     bio: user.bio,
     password: "",
   });
+  const [updating, setUpdating] = useState(false);
 
   const fileRef = useRef(null);
   const toast = useShowToast();
@@ -35,12 +36,9 @@ export const UpdateProfilePage = () => {
     setInputData({ ...inputData, [e.target.id]: e.target.value });
   }
 
-  function resetInputData() {
-    setInputData({});
-  }
-
   async function handleSubmit(e) {
     e.preventDefault();
+    setUpdating(true);
     try {
       const res = await fetch(`/api/user/update/${user._id}`, {
         method: "PUT",
@@ -51,19 +49,20 @@ export const UpdateProfilePage = () => {
       if (data.error) {
         toast("Error while fetching", data.error, "error");
         console.log(data.error);
+        setUpdating(false);
         return;
       }
       toast("User update", "User updated successfully", "success");
       setUser(data);
       localStorage.setItem("userInfo", JSON.stringify(data));
-      console.log(user);
+      setUpdating(false);
     } catch (error) {
       toast("Error while submitting", error, "error");
       console.log(error);
+    } finally {
+      setUpdating(false);
     }
   }
-
-  console.log(user);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -164,6 +163,7 @@ export const UpdateProfilePage = () => {
               _hover={{
                 bg: "red.500",
               }}
+              isLoading={updating}
             >
               Cancel
             </Button>
@@ -175,6 +175,7 @@ export const UpdateProfilePage = () => {
                 bg: "green.500",
               }}
               type="submit"
+              isLoading={updating}
             >
               Submit
             </Button>

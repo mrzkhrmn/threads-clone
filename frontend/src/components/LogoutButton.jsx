@@ -1,12 +1,15 @@
-import { Button, useToast } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import { useSetRecoilState } from "recoil";
 import { userAtom } from "../atoms/userAtom";
 import { FiLogOut } from "react-icons/fi";
 import { useShowToast } from "../hooks/useShowToast";
+import { useNavigate } from "react-router-dom";
 
 export const LogoutButton = () => {
   const setUser = useSetRecoilState(userAtom);
   const toast = useShowToast();
+  const navigate = useNavigate();
+
   async function handleLogout() {
     try {
       // fetch
@@ -28,6 +31,7 @@ export const LogoutButton = () => {
       localStorage.removeItem("userInfo");
       toast("Success", "Logged out", "success");
       setUser(null);
+      navigate("/auth");
     } catch (error) {
       toast({
         title: "Error",
