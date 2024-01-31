@@ -14,20 +14,23 @@ import {
   useColorModeValue,
   Link,
   useToast,
+  Spinner,
 } from "@chakra-ui/react";
 
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { authScreenAtom } from "../atoms/authAtom";
 import { userAtom } from "../atoms/userAtom";
 
 export const LoginCard = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [inputData, setInputData] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const setAuthPageRecoilState = useSetRecoilState(authScreenAtom);
   const setuser = useSetRecoilState(userAtom);
+  const user = useRecoilValue(userAtom);
 
   const toast = useToast();
 
@@ -40,6 +43,7 @@ export const LoginCard = () => {
   }
 
   async function handleLogin() {
+    setLoading(true);
     try {
       const res = await fetch("/api/user/login", {
         method: "POST",
@@ -69,7 +73,17 @@ export const LoginCard = () => {
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setLoading(false);
     }
+  }
+
+  if (!user && loading) {
+    return (
+      <Flex justifyContent={"center"}>
+        <Spinner size={"xl"} />
+      </Flex>
+    );
   }
 
   return (
@@ -128,6 +142,7 @@ export const LoginCard = () => {
                 bg={useColorModeValue("gray.600", "gray.700")}
                 _hover={{ bg: useColorModeValue("gray.700", "gray.800") }}
                 onClick={handleLogin}
+                isLoading={loading}
               >
                 Login
               </Button>

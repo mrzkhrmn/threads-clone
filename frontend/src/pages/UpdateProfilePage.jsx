@@ -15,6 +15,7 @@ import { useRecoilState } from "recoil";
 import { userAtom } from "../atoms/userAtom";
 import { usePreviewImage } from "../hooks/usePreviewImage";
 import { useShowToast } from "../hooks/useShowToast";
+import { useNavigate } from "react-router-dom";
 
 export const UpdateProfilePage = () => {
   const [user, setUser] = useRecoilState(userAtom);
@@ -29,6 +30,7 @@ export const UpdateProfilePage = () => {
 
   const fileRef = useRef(null);
   const toast = useShowToast();
+  const navigate = useNavigate();
 
   const { handleImageChange, imgUrl } = usePreviewImage();
 
@@ -164,6 +166,7 @@ export const UpdateProfilePage = () => {
                 bg: "red.500",
               }}
               isLoading={updating}
+              onClick={() => navigate(-1)}
             >
               Cancel
             </Button>

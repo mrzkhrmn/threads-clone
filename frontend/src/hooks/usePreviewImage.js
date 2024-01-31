@@ -19,5 +19,5 @@ export const usePreviewImage = () => {
       toast("Invalid file type", "Please select an image file", "error");
     }
   };
-  return { handleImageChange, imgUrl };
+  return { handleImageChange, imgUrl, setImgUrl };
 };

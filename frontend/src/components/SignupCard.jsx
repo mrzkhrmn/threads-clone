@@ -14,6 +14,7 @@ import {
   useColorModeValue,
   Link,
   useToast,
+  Spinner,
 } from "@chakra-ui/react";
 
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
@@ -25,6 +26,7 @@ import { userAtom } from "../atoms/userAtom";
 export const SignupCard = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [inputData, setInputData] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const setAuthPageRecoilState = useSetRecoilState(authScreenAtom);
   const setUser = useSetRecoilState(userAtom);
@@ -40,6 +42,7 @@ export const SignupCard = () => {
   }
 
   async function handleSignup() {
+    setLoading(true);
     try {
       const res = await fetch("/api/user/signup", {
         method: "POST",
@@ -70,10 +73,19 @@ export const SignupCard = () => {
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setLoading(false);
     }
   }
 
-  console.log(inputData);
+  if (!user && loading) {
+    return (
+      <Flex justifyContent={"center"}>
+        <Spinner size={"xl"} />
+      </Flex>
+    );
+  }
+
   return (
     <Flex align={"center"} justify={"center"}>
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
@@ -151,6 +163,7 @@ export const SignupCard = () => {
                 bg={useColorModeValue("gray.600", "gray.700")}
                 _hover={{ bg: useColorModeValue("gray.700", "gray.800") }}
                 onClick={handleSignup}
+                isLoading={loading}
               >
                 Sign up
               </Button>

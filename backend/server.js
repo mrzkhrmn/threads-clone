@@ -14,7 +14,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const app = express();
+const app = express({ limit: "50mb" });
 const port = process.env.PORT || 9000;
 
 app.use(express.json()); // to parse JSON data in the req.body
