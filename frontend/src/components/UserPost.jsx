@@ -4,13 +4,13 @@ import { Link } from "react-router-dom";
 import Actions from "./Actions";
 import { useState } from "react";
 
-export const UserPost = ({ likes, replies, postImg, postTitle }) => {
+export const UserPost = ({ likes, replies, postImg, postTitle, post }) => {
   const [liked, setLiked] = useState(false);
   return (
     <Link to={"/marckzuckerberg/post/1"}>
       <Flex gap={3} mb={4} py={5}>
         <Flex flexDirection={"column"} alignItems={"center"}>
-          <Avatar size={"md"} name="Mark Zuckerberg" src="/zuck-avatar.png" />
+          <Avatar size={"md"} name={"Mark Zuckerberg"} src="/zuck-avatar.png" />
           <Box w={"1px"} h={"full"} bg={"gray.light"} my={2}></Box>
           <Box position={"relative"} w={"full"}>
             <Avatar

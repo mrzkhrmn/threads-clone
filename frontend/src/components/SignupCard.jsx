@@ -163,6 +163,7 @@ export const SignupCard = () => {
                 bg={useColorModeValue("gray.600", "gray.700")}
                 _hover={{ bg: useColorModeValue("gray.700", "gray.800") }}
                 onClick={handleSignup}
+                loadingText={"Signing in..."}
                 isLoading={loading}
               >
                 Sign up
