@@ -1,5 +1,4 @@
 import { Avatar, Box, Flex, Image, Text } from "@chakra-ui/react";
-import { BsThreeDots } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import Actions from "./Actions";
 import { useEffect, useState } from "react";
@@ -7,7 +6,6 @@ import { useShowToast } from "../hooks/useShowToast";
 import { formatDistanceToNow } from "date-fns";
 
 export const Post = ({ post, postedBy }) => {
-  const [liked, setLiked] = useState(false);
   const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
@@ -123,21 +121,7 @@ export const Post = ({ post, postedBy }) => {
             </Box>
           )}
           <Flex gap={3} my={1}>
-            <Actions
-              liked={liked}
-              setLiked={setLiked}
-              likes={post.likes}
-              replies={post.replies}
-            />
-          </Flex>
-          <Flex gap={2} alignItems={"center"}>
-            <Text color={"gray.light"} fontSize="sm">
-              {post.replies.length} replies
-            </Text>
-            <Box w={0.5} h={0.5} borderRadius={"full"} bg={"gray.light"}></Box>
-            <Text color={"gray.light"} fontSize="sm">
-              {post.likes.length} likes
-            </Text>
+            <Actions post={post} />
           </Flex>
         </Flex>
       </Flex>
