@@ -8,49 +8,118 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { BsThreeDots } from "react-icons/bs";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Actions from "../components/Actions";
 import { useState } from "react";
 import { Comment } from "../components/Comment";
+import { useShowToast } from "../hooks/useShowToast";
+import { formatDistanceToNow } from "date-fns";
+import { useRecoilValue } from "recoil";
+import { userAtom } from "../atoms/userAtom";
+import { DeleteIcon } from "@chakra-ui/icons";
 
 export const PostPage = () => {
+  const currentUser = useRecoilValue(userAtom);
   const params = useParams();
-  const [liked, setLiked] = useState(false);
+  const toast = useShowToast();
+  const [post, setPost] = useState(null);
+  const [user, setUser] = useState();
+  const navigate = useNavigate();
+
+  async function handleDeletePost(e) {
+    try {
+      e.preventDefault();
+      if (!window.confirm("Are you sure you want to delete this post?")) return;
+      const res = await fetch(`/api/posts/${post._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.error) {
+        toast("Error", data.error, "error");
+        return;
+      }
+      toast("Success", "Post deleted successfully", "success");
+      navigate(`/${user.username}`);
+    } catch (error) {
+      toast("Error", error, "error");
+    }
+  }
+
+  useState(() => {
+    async function getUser() {
+      try {
+        const res = await fetch(`/api/user/${params.username}`);
+        const data = await res.json();
+        if (data.error) {
+          console.log(data.error);
+          toast("Getting user", data.error, "error");
+          return;
+        }
+        setUser(data);
+        console.log("User:", data);
+      } catch (error) {
+        toast("Error", error, "error");
+        setUser(null);
+      }
+    }
+    getUser();
+  }, [params.username, toast]);
+
+  useState(() => {
+    async function getPosts() {
+      try {
+        const res = await fetch(`/api/posts/${params.pid}`);
+        const data = await res.json();
+        if (data.error) {
+          console.log(data.error);
+          toast("Getting post", data.error, "error");
+          return;
+        }
+        setPost(data);
+        console.log("Post:", data);
+      } catch (error) {
+        toast("Error", error, "error");
+        setPost(null);
+      }
+    }
+
+    getPosts();
+  }, [params.pid, toast]);
+
+  if (!user || !post) return null;
+
   return (
     <Flex flexDirection={"column"} gap={4}>
       <Flex justifyContent={"space-between"}>
         <Flex alignItems={"center"} gap={4}>
-          <Avatar src="/zuck-avatar.png" />
+          <Avatar src={user.profilePic} name={user.name} />
           <Flex alignItems={"center"} gap={1}>
-            <Text fontWeight={"bold"}>{params.username}</Text>
+            <Text fontWeight={"bold"}>{user.username}</Text>
             <Image w={4} h={4} src="/verified.png" />
           </Flex>
         </Flex>
         <Flex alignItems={"center"} gap={4}>
-          <Text color={"gray.light"}>1d</Text>
-          <BsThreeDots />
+          <Text color={"gray.light"}>
+            {formatDistanceToNow(new Date(post.createdAt))} ago
+          </Text>
+          {currentUser?._id === user?._id && (
+            <DeleteIcon onClick={handleDeletePost} cursor={"pointer"} />
+          )}
         </Flex>
       </Flex>
-      <Text>Let&apos;s talk about threads</Text>
-      <Box
-        borderRadius={6}
-        overflow={"hidden"}
-        border={"1px solid"}
-        borderColor={"gray.light"}
-      >
-        <Image src={"/post1.png"} w={"full"} />
-      </Box>
+      <Text>{post.text}</Text>
+      {post.img && (
+        <Box
+          borderRadius={6}
+          overflow={"hidden"}
+          border={"1px solid"}
+          borderColor={"gray.light"}
+        >
+          <Image src={post.img} w={"full"} />
+        </Box>
+      )}
       <Flex>
-        <Actions liked={liked} setLiked={setLiked} />
-      </Flex>
-      <Flex gap={2} alignItems={"center"}>
-        <Text color={"gray.light"} fontSize="sm">
-          {"123"} replies
-        </Text>
-        <Box w={0.5} h={0.5} borderRadius={"full"} bg={"gray.light"}></Box>
-        <Text color={"gray.light"} fontSize="sm">
-          {"132123"} likes
-        </Text>
+        <Actions post={post} />
       </Flex>
       <Divider />
       <Flex justifyContent={"space-between"}>
@@ -61,27 +130,13 @@ export const PostPage = () => {
         <Button>Get</Button>
       </Flex>
       <Divider />
-      <Comment
-        comment={"Its really nice!"}
-        createdAt={"2d"}
-        likes={100}
-        username={"johndoe"}
-        avatarUrl={"https://bit.ly/dan-abramov"}
-      />
-      <Comment
-        comment={"I like this one!"}
-        createdAt={"1d"}
-        likes={23}
-        username={"maryjane"}
-        avatarUrl={"https://bit.ly/code-beast"}
-      />
-      <Comment
-        comment={"I dont like it!"}
-        createdAt={"2h"}
-        likes={1}
-        username={"garyosborn"}
-        avatarUrl={"https://bit.ly/sage-adebayo"}
-      />
+      {post.replies.map((reply) => (
+        <Comment
+          key={reply._id}
+          reply={reply}
+          lastReply={reply._id === post.replies[post.replies.length - 1]._id}
+        />
+      ))}
     </Flex>
   );
 };
