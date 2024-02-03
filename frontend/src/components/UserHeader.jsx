@@ -63,7 +63,7 @@ export const UserHeader = ({ user }) => {
         user.followers.pop();
       } else {
         toast("Success", `Followed ${user.name}`, "success");
-        user.followers.push(currentUser._id);
+        user.followers.push(currentUser?._id);
       }
 
       setFollowing(!following);
@@ -104,12 +104,12 @@ export const UserHeader = ({ user }) => {
           </Box>
         </Flex>
         <Text>{user.bio}</Text>
-        {currentUser._id === user._id && (
+        {currentUser?._id === user._id && (
           <RouterLink to={"/update"}>
             <Button size={"sm"}>Update Profile</Button>
           </RouterLink>
         )}
-        {currentUser._id !== user._id && (
+        {currentUser?._id !== user._id && (
           <Button
             size={"sm"}
             onClick={handleFollowUnfollow}

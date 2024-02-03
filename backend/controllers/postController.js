@@ -15,6 +15,24 @@ export const getPost = async (req, res) => {
   }
 };
 
+export const getUserPosts = async (req, res) => {
+  const { username } = req.params;
+  try {
+    const user = await User.findOne({ username });
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+    const post = await Post.find({ postedBy: user._id }).sort({
+      createdAt: -1,
+    });
+    if (!post) return res.status(404).json({ error: "Post not found" });
+
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    console.log("Error in getPost: " + error.message);
+  }
+};
+
 export const createPost = async (req, res) => {
   try {
     const { postedBy, text } = req.body;
@@ -63,6 +81,11 @@ export const deletePost = async (req, res) => {
 
     if (req.user._id.toString() !== post.postedBy.toString()) {
       res.status(400).json({ message: "You can only delete your own post!" });
+    }
+
+    if (post.img) {
+      const imgId = post.img.split("/").pop().split(".")[0];
+      await cloudinary.uploader.destroy(imgId);
     }
 
     await Post.findByIdAndDelete(id);
