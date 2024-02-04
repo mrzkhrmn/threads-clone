@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 import { useShowToast } from "../hooks/useShowToast";
 import { Flex, Spinner, Text } from "@chakra-ui/react";
 import { Post } from "../components/Post";
+import { useRecoilState } from "recoil";
+import { postAtom } from "../atoms/postAtom";
 
 export const UserPage = () => {
   const { username } = useParams();
@@ -11,7 +13,7 @@ export const UserPage = () => {
   const toast = useShowToast();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useRecoilState(postAtom);
   const [isFetchingPosts, setIsFetchingPosts] = useState(false);
 
   useEffect(() => {
@@ -21,7 +23,6 @@ export const UserPage = () => {
         const res = await fetch(`/api/user/${username}`);
         const data = await res.json();
         if (data.error) {
-          console.log(data.error);
           toast("Getting user", data.error, "error");
           return;
         }
@@ -38,20 +39,20 @@ export const UserPage = () => {
         const res = await fetch(`/api/posts/user/${username}`);
         const data = await res.json();
         if (data.error) {
-          console.log(data.error);
           toast("Getting user", data.error, "error");
           return;
         }
         setPosts(data);
       } catch (error) {
         toast("Error", error, "error");
+        setPosts([]);
       } finally {
         setIsFetchingPosts(false);
       }
     }
     getUserPosts();
     getUser();
-  }, [toast, username]);
+  }, [toast, username, setPosts]);
 
   if (!user && loading) {
     return (

@@ -1,4 +1,5 @@
 import User from "../models/userModel.js";
+import Post from "../models/postModel.js";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
@@ -177,6 +178,19 @@ export const updateProfile = async (req, res) => {
     user.bio = bio || user.bio;
 
     user = await user.save();
+
+    // Find all posts that this user replied and update username and userProfilePic fields
+    await Post.updateMany(
+      { "replies.userId": userId },
+      {
+        $set: {
+          "replies.$[reply].username": user.username,
+          "replies.$[reply].userProfilePic": user.profilePic,
+        },
+      },
+      { arrayFilters: [{ "reply.userId": userId }] }
+    );
+
     user.password = null;
     res.status(200).json(user);
   } catch (error) {

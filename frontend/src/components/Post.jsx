@@ -5,12 +5,14 @@ import Actions from "./Actions";
 import { useEffect, useState } from "react";
 import { useShowToast } from "../hooks/useShowToast";
 import { formatDistanceToNow } from "date-fns";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userAtom } from "../atoms/userAtom";
+import { postAtom } from "../atoms/postAtom";
 
 export const Post = ({ post, postedBy }) => {
   const [user, setUser] = useState(null);
   const currentUser = useRecoilValue(userAtom);
+  const [posts, setPosts] = useRecoilState(postAtom);
 
   const navigate = useNavigate();
   const toast = useShowToast();
@@ -28,6 +30,7 @@ export const Post = ({ post, postedBy }) => {
         return;
       }
       toast("Success", "Post deleted successfully", "success");
+      setPosts(posts.filter((prev) => prev._id !== post._id));
     } catch (error) {
       toast("Error", error, "error");
     }

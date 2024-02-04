@@ -50,7 +50,6 @@ export const UpdateProfilePage = () => {
       const data = await res.json();
       if (data.error) {
         toast("Error while fetching", data.error, "error");
-        console.log(data.error);
         setUpdating(false);
         return;
       }
@@ -60,7 +59,6 @@ export const UpdateProfilePage = () => {
       setUpdating(false);
     } catch (error) {
       toast("Error while submitting", error, "error");
-      console.log(error);
     } finally {
       setUpdating(false);
     }

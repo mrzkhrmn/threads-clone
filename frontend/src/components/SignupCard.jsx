@@ -14,7 +14,6 @@ import {
   useColorModeValue,
   Link,
   useToast,
-  Spinner,
 } from "@chakra-ui/react";
 
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
@@ -64,7 +63,6 @@ export const SignupCard = () => {
       localStorage.setItem("userInfo", JSON.stringify(data));
       setUser(data);
       resetInputData();
-      console.log(data);
     } catch (error) {
       toast({
         title: "Error",
@@ -76,14 +74,6 @@ export const SignupCard = () => {
     } finally {
       setLoading(false);
     }
-  }
-
-  if (!user && loading) {
-    return (
-      <Flex justifyContent={"center"}>
-        <Spinner size={"xl"} />
-      </Flex>
-    );
   }
 
   return (
