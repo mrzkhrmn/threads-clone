@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:9000",
+        target: "https://threads-clone-10ir.onrender.com",
         changeOrigin: true,
         secure: false,
       },
