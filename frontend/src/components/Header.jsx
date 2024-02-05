@@ -7,6 +7,7 @@ import { RxAvatar } from "react-icons/rx";
 import { FiLogOut } from "react-icons/fi";
 import useLogout from "../hooks/useLogout";
 import { authScreenAtom } from "../atoms/authAtom";
+import { Search } from "./Search";
 
 export const Header = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -25,13 +26,16 @@ export const Header = () => {
           Login
         </Link>
       )}
-      <Image
-        cursor={"pointer"}
-        alt="logo"
-        w={6}
-        src={colorMode === "dark" ? "/light-logo.svg" : "/dark-logo.svg"}
-        onClick={toggleColorMode}
-      />
+      <Flex justifyContent={"center"} gap={4}>
+        <Image
+          cursor={"pointer"}
+          alt="logo"
+          w={6}
+          src={colorMode === "dark" ? "/light-logo.svg" : "/dark-logo.svg"}
+          onClick={toggleColorMode}
+        />
+        <Search />
+      </Flex>
       {user && (
         <Flex alignItems={"center"} gap={4}>
           <Link to={`/${user.username}`}>

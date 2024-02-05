@@ -30,6 +30,17 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}).select("-password").select("-updatedAt");
+
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    console.log("Error in getAllUsers: " + error.message);
+  }
+};
+
 export const signupUser = async (req, res) => {
   try {
     const { name, username, email, password } = req.body;
